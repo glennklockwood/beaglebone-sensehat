@@ -1,0 +1,5 @@
+adafruit-blinka
+adafruit_bbio
+adafruit-circuitpython-lps2x
+adafruit-circuitpython-lsm9ds1o
+adafruit-circuitpython-hts221
