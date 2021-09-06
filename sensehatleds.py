@@ -51,7 +51,7 @@ DEFAULT_PATTERN = [
 class LEDMatrix:
     def __init__(self, i2c_bus, address=DEVICE_ADDRESS):
         self.i2c_device = I2CDevice(i2c_bus, address)
-        self.brightness = 1.0
+        self._brightness = 1.0
         self.nrow = 8
         self.ncol = 8
         self.clear()
@@ -65,6 +65,14 @@ class LEDMatrix:
                 output_str += "\n"
             output_str += "\n"
         return output_str
+
+    @property
+    def brightness(self):
+        return self._brightness
+
+    @brightness.setter
+    def brightness(self, value):
+        self._brightness = value % 1.0
 
     def default_pattern(self):
         self.pixels = DEFAULT_PATTERN
@@ -108,7 +116,7 @@ class LEDMatrix:
     def update(self):
         with self.i2c_device as display:
             display.write(bytearray([0] + [
-                int(x) for x in itertools.chain(
+                int(x * self.brightness) for x in itertools.chain(
                     *itertools.chain(
                         *self.pixels))]))
 
@@ -121,9 +129,10 @@ def demo():
     display.default_pattern()
     display.update()
 
-    display.brightness = 1.00
     while True:
+        #display.brightness += 0.1
         display.shift_r()
+        display.shift_d()
         display.update()
         time.sleep(0.1)
 
